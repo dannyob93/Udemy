@@ -2,39 +2,37 @@
 
 #pragma once
 
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Components/ActorComponent.h"
-#include "OpenDoor.generated.h"
+#include "Grabber.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BUILDINGESCAPE_API UOpenDoor : public UActorComponent
+class BUILDINGESCAPE_API UGrabber : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UOpenDoor();
+	UGrabber();
 
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-	void OpenDoor();
-	void CloseDoor();
+	
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
 private:
-	UPROPERTY(VisibleAnywhere)
-		float OpenAngle = 90.0f;
-	
-	UPROPERTY(EditAnywhere)
-		ATriggerVolume* PressurePlate;
+		float Reach = 100.f;
+		UPhysicsHandleComponent* PhysicsHandle = nullptr;
+		UInputComponent* InputComponent = nullptr;
+		void FindPhysicsHandleComponent();
+		void SetupInputComponent();
+		///Ray-Cast and grab what's in reach
+		void Grab();
+		void Release();
 
-	UPROPERTY(EditAnywhere)
-		float DoorCloseDelay = 1.f;
+		//Return hit for first physics body in reach
+		const FHitResult GetFirstPhysicsBodyInReach();
 
-	float LastDoorOpenTime;
-
-	AActor* ActorThatOpens; //Remember Pawn inherits from Actor
-	AActor* Owner;
 };
